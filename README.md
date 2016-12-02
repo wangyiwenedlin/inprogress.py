@@ -44,11 +44,20 @@ def inprogress_route():
 	for i in wr:
 		wr_bust.append(i[0])
 
+	cur.execute('SELECT * FROM DimensionalRecord WHERE released = 0 ')
+	dr = cur.fetchall()
+
+	dr_bust = list()
+	for i in dr:
+		dr_bust.append(i[0])
+
 	ids = list(set(mqcp_bust).union(set(pc_bust)))
 	ids = list(set(ids).union(set(rf_bust)))
 	ids = list(set(ids).union(set(wi_bust)))
 	ids = list(set(ids).union(set(wr_bust)))
-	check = [([0] * 8) for i in ids]
+	ids = list(set(ids).union(set(dr_bust)))
+	
+	check = [([0] * 9) for i in ids]
 
 
 
@@ -67,12 +76,14 @@ def inprogress_route():
 			check[ids.index(i)][4] = 1
 		if i in wr_bust:
 			check[ids.index(i)][5] = 1
+		if i in dr_bust:
+			check[ids.index(i)][6] = 1
 
-		check[ids.index(i)][6] = i
-		check[ids.index(i)][7] = pro[3]
+		check[ids.index(i)][7] = i
+		check[ids.index(i)][8] = pro[3]
 
 
-	return jsonify(	CHECK = [{"pid":i[6], "pname": i[0], "mqcp_bust": i[1], "pc_bust": i[2], "rf_bust": i[3], "wi_bust": i[4], "wr_bust":i[5], "creator": i[7]}  for i in check],
+	return jsonify(	CHECK = [{"pid":i[7], "pname": i[0], "mqcp_bust": i[1], "pc_bust": i[2], "rf_bust": i[3], "wi_bust": i[4], "wr_bust":i[5],"dr_bust":i[6], "creator": i[8]}  for i in check],
 					USER = current_user.id
     	)
 
